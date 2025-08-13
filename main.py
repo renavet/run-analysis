@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
+from sklearn.linear_model import LinearRegression
 
 
 path="/home/renato/Desktop/runanalysis/run-analysis/Activities(1).csv"
@@ -56,6 +57,34 @@ def T_C():
     plt.title('Calorie vs Tempo') # Aggiunto: Titolo per il grafico
 
     plt.savefig('Tempo-Calorie_Scatter.pdf')
+
+    X = df[['Tempo_Secondi']]  # 2D array
+    y = df['Calorie']
+    
+    model = LinearRegression()
+    model.fit(X, y)
+
+    y_pred = model.predict(X)  # Predizioni per gli stessi dati
+    print("Intercept:", model.intercept_)
+    print("Slope:", model.coef_[0])
+    print("Predizioni:", y_pred[:10],"kcal")  # Prime 10 predizioni
+
+    for tempo, pred in zip(df['Tempo_Secondi'], y_pred):
+        print(f"Tempo: {tempo:.2f} sec  →  Calorie previste: {pred:.2f}")
+
+    # Previsione per un tempo nuovo (esempio: 3600 sec = 1h)
+    nuovo_tempo = np.array([[3600]])
+    pred_nuovo = model.predict(nuovo_tempo)
+    print(f"\nPrevisione per 1h (3600 sec): {pred_nuovo[0]:.2f} calorie")
+
+    try:
+        tempo_input = float(input("\nInserisci il tempo in secondi per la previsione: "))
+        pred_nuovo = model.predict(np.array([[tempo_input]]))
+        print(f"Per {tempo_input:.2f} sec il modello prevede: {pred_nuovo[0]:.2f} calorie")
+    except ValueError:
+        print("⚠ Inserisci un numero valido per il tempo.")
+
+
 
 
 T_C()
