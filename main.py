@@ -1,8 +1,13 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import stats
+from scipy import stats 
+from scipy.optimize import curve_fit
 from sklearn.linear_model import LinearRegression
+import math
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import make_pipeline
 
 
 path="/home/renato/Desktop/runanalysis/run-analysis/Activities(1).csv"
@@ -110,9 +115,23 @@ def Pm_C():
 
     res=stats.linregress(df['Passo_Medio_Secondi'],df['Calorie'])
 
+
+    #regressione polinomiale
+    model=make_pipeline(PolynomialFeatures(degree=3), LinearRegression())
+    model.fit(df[['Passo_Medio_Secondi']], df['Calorie'])
+
+    # Predizioni per i dati esistenti
+    y_pred = model.predict(df[['Passo_Medio_Secondi']])
+    
+
+
+
+
     plt.figure(figsize=(10,6))
     plt.scatter(df['Passo_Medio_Secondi'], df['Calorie'], c=df['Calorie'], cmap='magma') # Aggiunto: 'c' per specificare i valori per la colormap
     plt.plot(df['Passo_Medio_Secondi'], res.intercept + res.slope*df['Passo_Medio_Secondi'], 'black', label='fitted line')
+    plt.scatter(df['Passo_Medio_Secondi'], y_pred, color='red', label='polynomial fit')  # Aggiunto: Regressione polinomiale
+    plt.legend()
     plt.xlabel('Passo Medio') # Aggiunto: Etichetta asse x
     plt.ylabel('Calorie') # Aggiunto: Etichetta asse y
     plt.colorbar(label='Calorie') # Aggiunto: Barra colori per interpretare la colormap

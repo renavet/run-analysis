@@ -98,3 +98,4 @@ plt.show()
 # new_data_scaled = scaler.transform(new_data)
 # prediction = model.predict(new_data_scaled)
 # print("Predizione calorie: ", prediction[0][0])
+
